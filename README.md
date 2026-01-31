@@ -12,13 +12,13 @@ MyFicDB is a self-hosted single-user app similar to AO3 for hosting Fan Fiction.
 Please utilise the GitHub Discussions, or open a Github Issue for Bug Reports or Feature Requests.
 
 ## Screenshots
-<img width="2524" height="1259" alt="Stories Index" src="https://github.com/user-attachments/assets/92abce53-6a13-4714-b957-90198c1fba76" />
+<img width="2524" height="1259" alt="Stories Index" src="https://iili.io/fLkPPEb.png" />
 
-![Tags Index](https://github.com/user-attachments/assets/9ef249b7-5d02-4cf3-8de6-0458c61118ff)
+![Tags Index](https://iili.io/fLkPjBs.jpg)
 
-![Series Index](https://github.com/user-attachments/assets/94c6f8b0-853c-43f1-965a-290ea5c63296)
+![Series Index](https://iili.io/fLkPEkN.jpg)
 
-![Actor View](https://github.com/user-attachments/assets/39af8e0c-1540-44ad-aeb3-7ae8d1cc351f)
+![Actor View](https://iili.io/fLkPXQn.jpg)
 
 ## Features
 
