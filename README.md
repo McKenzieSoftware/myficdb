@@ -4,8 +4,8 @@ MyFicDB is a self-hosted single-user app similar to AO3 for hosting Fan Fiction.
 
 ## Getting Started
 
-- [Download/Installation](https://github.com/Laim/MyFicDB/wiki/Installation-Guide)
-- [User Guide](https://github.com/Laim/MyFicDB/wiki/User-Guide)
+- [Download/Installation](https://github.com/McKenzieSoftware/MyFicDB/wiki/Installation-Guide)
+- [User Guide](https://github.com/McKenzieSoftware/MyFicDB/wiki/User-Guide)
 
 ## Support
 
