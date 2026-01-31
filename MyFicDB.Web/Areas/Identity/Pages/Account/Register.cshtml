@@ -1,0 +1,109 @@
+﻿@page
+@model RegisterModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Register";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MyFicDB</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <script>
+        (function () {
+            const storageKey = 'myficdb.theme';
+
+            function getPreferredTheme() {
+                const stored = localStorage.getItem(storageKey);
+                if (stored === 'light' || stored === 'dark') return stored;
+
+                return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+                    ? 'dark'
+                    : 'light';
+            }
+
+            document.documentElement.setAttribute('data-bs-theme', getPreferredTheme());
+        })();
+    </script>
+</head>
+
+<body class="bg-body-tertiary">
+    @{
+        if (!Model.HasUserRegistered)
+        {
+            <div class="alert alert-secondary rounded-0 text-center border-bottom border-0" role="alert">
+                Registration will be disabled on sucessful creation of the first user account.
+            </div>
+        }
+    }
+    <div class="min-vh-100 d-flex align-items-center justify-content-center p-3">
+        <div class="card shadow-sm border-0" style="max-width: 420px; width: 100%;">
+            <div class="card-body p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="fw-semibold fs-3">MyFicDB</div>
+                    <div class="text-body-secondary mt-1">Create your account</div>
+                </div>
+
+                <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.Username"
+                               class="form-control"
+                               autocomplete="username"
+                               aria-required="true"
+                               placeholder="john.doe" />
+                        <label asp-for="Input.Username">Username</label>
+                        <span asp-validation-for="Input.Username" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.Password"
+                               class="form-control"
+                               autocomplete="new-password"
+                               aria-required="true"
+                               placeholder="Password" />
+                        <label asp-for="Input.Password">Password</label>
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.ConfirmPassword"
+                               class="form-control"
+                               autocomplete="new-password"
+                               aria-required="true"
+                               placeholder="Confirm password" />
+                        <label asp-for="Input.ConfirmPassword">Confirm password</label>
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <button id="registerSubmit" type="submit" class="btn btn-primary w-100 btn-lg">
+                        Register
+                    </button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <a class="link-secondary text-decoration-none"
+                       asp-page="./Login"
+                       asp-route-returnUrl="@Model.ReturnUrl">
+                        Already have an account? Log in
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+</html>

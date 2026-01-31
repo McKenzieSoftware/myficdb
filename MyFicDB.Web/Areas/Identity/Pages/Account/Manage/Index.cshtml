@@ -1,0 +1,44 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+
+@section PageSubtitle {
+        Update your account details.
+}
+
+<form id="profile-form" method="post" class="mt-2">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="form-floating">
+                <input asp-for="Input.Username" class="form-control" placeholder="Username" />
+                <label asp-for="Input.Username"></label>
+            </div>
+            <div class="form-text">
+                Your username is used for sign-in.
+            </div>
+        </div>
+
+        <div class="col-12">
+            <hr class="my-2" />
+            <div class="d-flex gap-2">
+                <button id="update-profile-button" type="submit" class="btn btn-primary">
+                    Save changes
+                </button>
+
+                @* Optional: add a secondary action if you want *@
+                @* <a class="btn btn-outline-secondary" asp-page="./Index">Cancel</a> *@
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,91 @@
+﻿@page
+@model ShowRecoveryCodesModel
+@{
+    ViewData["Title"] = "Recovery codes";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+
+@section PageSubtitle {
+        Store these codes somewhere safe. Each code can be used once.
+}
+
+<div class="mt-2">
+    <div class="alert alert-warning" role="alert">
+        <strong>Put these codes in a safe place.</strong>
+        <div class="mt-1">
+            If you lose your device and don't have recovery codes, you will lose access to the entire system.
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="d-flex align-items-start justify-content-between gap-2 mb-3">
+                <div>
+                    <h5 class="card-title mb-1">Your recovery codes</h5>
+                    <div class="text-body-secondary">
+                        Print these or store them in a password manager. Do not share them.
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="copyRecoveryCodes">
+                    Copy all
+                </button>
+            </div>
+
+            <div class="row g-2" id="recoveryCodes">
+                @for (var i = 0; i < Model.RecoveryCodes.Length; i++)
+                {
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <code class="d-block border rounded px-3 py-2 bg-body-tertiary user-select-all">
+                            @Model.RecoveryCodes[i]
+                        </code>
+                    </div>
+                }
+            </div>
+
+            <hr class="my-3" />
+
+            <div class="d-flex gap-2">
+                <a asp-page="./TwoFactorAuthentication" class="btn btn-outline-secondary">
+                    Back
+                </a>
+                <a asp-page="./GenerateRecoveryCodes" class="btn btn-outline-danger">
+                    Generate new codes
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const btn = document.getElementById('copyRecoveryCodes');
+            const container = document.getElementById('recoveryCodes');
+            if (!btn || !container) return;
+
+            btn.addEventListener('click', async function () {
+                try {
+                    const codes = Array.from(container.querySelectorAll('code'))
+                        .map(x => x.innerText.trim())
+                        .filter(Boolean)
+                        .join('\n');
+
+                    await navigator.clipboard.writeText(codes);
+
+                    const original = btn.textContent;
+                    btn.textContent = 'Copied';
+                    btn.disabled = true;
+
+                    setTimeout(() => {
+                        btn.textContent = original;
+                        btn.disabled = false;
+                    }, 1500);
+                } catch {
+                    // If clipboard API fails (permissions), do nothing.
+                }
+            });
+        })();
+    </script>
+}

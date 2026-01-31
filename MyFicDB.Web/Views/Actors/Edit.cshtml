@@ -1,0 +1,131 @@
+﻿@using MyFicDB.Web.ViewModels.Actor
+@model ActorEditViewModel
+
+@{
+    ViewData["Title"] = $"Edit Actor - {Model.Name}";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+        <h1 class="mb-1">Edit Actor</h1>
+        <div class="text-body-secondary">Update Actor Details</div>
+    </div>
+
+    <a class="btn btn-outline-secondary"
+       asp-controller="Actors"
+       asp-action="View"
+       asp-route-slug="@Model.Slug">
+        Back to Actor
+    </a>
+</div>
+
+<form method="post" enctype="multipart/form-data" class="card shadow-sm">
+    @Html.AntiForgeryToken()
+
+    <div class="card-body">
+        <input type="hidden" asp-for="Id" />
+
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+        <div class="row g-3">
+            <div class="col-md-7">
+                <div class="form-floating">
+                    <input asp-for="Name" class="form-control" autocomplete="off" />
+                    <label asp-for="Name"></label>
+                </div>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-5">
+                <div class="form-floating">
+                    <input asp-for="Age" class="form-control" type="number" min="0" max="200" />
+                    <label asp-for="Age"></label>
+                </div>
+                <span asp-validation-for="Age" class="text-danger"></span>
+            </div>
+
+            <div class="col-12">
+                <div class="form-floating">
+                    @* Rows doesn't work on floating label text-areas *@
+                    <textarea asp-for="Description" class="form-control" style="min-height: 250px;"></textarea>
+                    <label asp-for="Description"></label>
+                </div>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="col-12">
+                <hr class="my-2" />
+                <h5 class="mb-2">Image</h5>
+
+                @if (Model.HasImage)
+                {
+                    <div class="d-flex align-items-start gap-3 mb-3">
+                        <img src="@Url.Action("Image", "Actors", new { slug = Model.Slug })"
+                             alt="Actor image"
+                             style="max-width: 160px; max-height: 160px; object-fit: cover;"
+                             class="rounded border" />
+
+                        <div class="flex-grow-1">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" asp-for="RemoveImage" />
+                                <label class="form-check-label" asp-for="RemoveImage">
+                                    Remove current image
+                                </label>
+                            </div>
+
+                            <div class="text-body-secondary small">
+                                Uploading a new image will replace the current one.  Please note that due to caching, it may take a few minutes for the image to update across MyFicDB.
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-body-secondary mb-2">
+                        No image uploaded yet.
+                    </div>
+                }
+
+                <label asp-for="Image" class="form-label">Upload new image (PNG/JPG/WEBP, max 500KB)</label>
+                <input asp-for="Image" type="file" class="form-control" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" />
+                <span asp-validation-for="Image" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-footer d-flex justify-content-end gap-2">
+        <a class="btn btn-outline-secondary"
+           asp-controller="Actors"
+           asp-action="View"
+           asp-route-slug="@Model.Slug">
+            Cancel
+        </a>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+        <button type="button"
+                class="btn btn-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#deleteActorModal">
+            Delete
+        </button>
+    </div>
+</form>
+
+@* Form is here to prevent embedded forms *@
+<form id="deleteActorForm"
+      asp-action="Delete"
+      asp-route-slug="@Model.Slug"
+      method="post">
+    @Html.AntiForgeryToken()
+</form>
+
+@await Html.PartialAsync("_ConfirmDeleteModalPartial", new ConfirmDeleteModalViewModel
+{
+    ModalId = "deleteActorModal",
+    LabelId = "deleteActorModalLabel",
+    FormId = "deleteActorForm",
+    ItemLabel = "actor"
+})
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

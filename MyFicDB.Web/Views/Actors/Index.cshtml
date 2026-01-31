@@ -1,0 +1,86 @@
+﻿@using MyFicDB.Web.ViewModels.Actor
+@model ActorIndexPagedViewModel
+
+@{
+    ViewData["Title"] = "Actors";
+}
+
+<div class="d-flex flex-column flex-lg-row align-items-start justify-content-between gap-3 mb-3">
+    <div>
+        <h1 class="mb-1">@ViewData["Title"]</h1>
+        <div class="text-body-secondary">Browse all @ViewData["Title"].</div>
+    </div>
+
+    <div class="d-flex gap-2 align-self-start align-self-md-end">
+        <a class="btn btn-primary" asp-action="Create">Create Actor</a>
+    </div>
+</div>
+
+@if (Model.Actors.Count == 0)
+{
+    <div class="alert alert-secondary">
+        No actors yet.
+        <a class="ms-1" asp-action="Create">Create the first one</a>.
+    </div>
+}
+else
+{
+    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4">
+        @foreach (var actor in Model.Actors)
+        {
+            <div class="col">
+                <div class="text-center h-100">
+                    <a asp-controller="Actors"
+                       asp-action="View"
+                       asp-route-slug="@actor.Slug"
+                       class="text-decoration-none text-reset d-block">
+
+                        <div class="fw-semibold mb-2 text-truncate"
+                             title="@actor.Name">
+                            @actor.Name
+                        </div>
+
+                        <div class="ratio ratio-1x1 rounded overflow-hidden">
+                            <img src="@Url.Action("Image", "Actors", new { slug = actor.Slug })"
+                                 alt="@actor.Name"
+                                 class="rounded border img-fluid w-100 h-100"
+                                 style="object-fit: cover;" />
+                        </div>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="row">
+        @if (Model.TotalPages > 1)
+        {
+            <nav aria-label="Actors pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+
+                    <li class="page-item @(Model.HasPrevious ? "" : "disabled")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)">
+                            Previous
+                        </a>
+                    </li>
+
+                    @for (int i = Model.WindowStart; i <= Model.WindowEnd; i++)
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@i" aria-current="@(i == Model.CurrentPage ? "page" : null)">
+                                @i
+                            </a>
+                        </li>
+                    }
+
+                    <li class="page-item @(Model.HasNext ? "" : "disabled")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)">
+                            Next
+                        </a>
+                    </li>
+
+                </ul>
+            </nav>
+        }
+    </div>
+}

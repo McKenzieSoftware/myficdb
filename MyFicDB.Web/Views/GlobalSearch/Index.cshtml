@@ -1,0 +1,57 @@
+﻿@using MyFicDB.Web.ViewModels.GlobalSearch
+@model GlobalSearchIndexViewModel
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+<div class="d-flex flex-column flex-lg-row align-items-start justify-content-between gap-3 mb-3">
+    <div>
+        <h1 class="mb-1">@ViewData["Title"]</h1>
+        <div class="text-body-secondary">Search for Stories.</div>
+    </div>
+</div>
+
+<!-- Search form -->
+<form method="get" asp-action="Index" asp-controller="GlobalSearch" class="mb-4">
+    <div class="input-group">
+        <input type="search"
+               name="query"
+               value="@Context.Request.Query["query"]"
+               class="form-control"
+               placeholder="Winnie The Pooh..."
+               aria-label="Search" />
+
+        <button class="btn btn-primary" type="submit">
+            Search
+        </button>
+    </div>
+</form>
+
+<!-- Results -->
+@if (Model.Stories.Any())
+{
+    <div class="mb-3 text-body-secondary small">
+        Showing @Model.Stories.Count result@(Model.Stories.Count == 1 ? "" : "s")
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 gx-3 gy-3">
+        @foreach (var story in Model.Stories)
+        {
+            <partial name="_StoryCard" model="story" />
+        }
+    </div>
+}
+else if (!string.IsNullOrWhiteSpace(Context.Request.Query["query"]))
+{
+    <div class="alert alert-secondary">
+        No results found for
+        <strong>@Context.Request.Query["query"]</strong>.
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        Enter a search term to see some results.
+    </div>
+}

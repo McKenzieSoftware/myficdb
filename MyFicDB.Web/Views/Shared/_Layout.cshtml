@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyFicDB - @ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/tinymce-bootstrap-dark.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MyFicDB.Web.styles.css" asp-append-version="true" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+    @RenderSection("Styles", required: false)
+    <script>
+        (function () {
+            const storageKey = 'myficdb.theme';
+
+            function getPreferredTheme() {
+                const stored = localStorage.getItem(storageKey);
+                if (stored === 'light' || stored === 'dark') return stored;
+
+                // No stored preference: follow OS
+                return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+
+            function applyTheme(theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+
+            applyTheme(getPreferredTheme());
+        })();
+    </script>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <header class="mfdb-app-header">
+        <nav class="navbar navbar-expand-lg mfdb-app-navbar">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center gap-2" asp-controller="Home" asp-action="Index">
+                    <span class="mfdb-brand-mark">
+                        <img style="width: 24px; height: 24px;" src="/images/app-logo.png" />
+                    </span>
+                    <span class="d-flex flex-column lh-sm">
+                        <span class="mfdb-brand-title">MyFicDB</span>
+                        <small class="mfdb-brand-subtitle text-body-secondary"></small>
+                    </span>
+                </a>
+
+                <button class="navbar-toggler" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#mainNav"
+                        aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav me-auto mt-3 mt-lg-0">
+@*                         <li class="nav-item">
+                            <a class="nav-link mfdb-app-navlink" asp-controller="Home" asp-action="Index">Home</a>
+                        </li> *@
+                        <li class="nav-item">
+                            <a class="nav-link mfdb-app-navlink" asp-controller="Stories" asp-action="Index">Stories</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link mfdb-app-navlink" asp-controller="Tags" asp-action="Index">Tags</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link mfdb-app-navlink" asp-controller="Series" asp-action="Index">Series</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link mfdb-app-navlink" asp-controller="Actors" asp-action="Index">Actors</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link mfdb-app-navlink" asp-controller="GlobalSearch" asp-action="Index">Search</a>
+                        </li>
+                    </ul>
+
+                    <div class="ms-lg-3">
+                        <partial name="_LoginPartial" />
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="flex-fill">
+        <div class="container">
+            <main role="main" class="flex-fill">
+                @if (TempData["FlashError"] is string err)
+                {
+                    <div class="alert alert-danger">@err</div>
+                }
+                @if (TempData["FlashSuccess"] is string ok)
+                {
+                    <div class="alert alert-success">@ok</div>
+                }
+
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <footer class="border-top text-muted mt-2">
+        <div class="container py-3">
+
+            <div class="row align-items-center text-center text-md-start">
+
+                <!-- Left: Links -->
+                <div class="col-12 col-md-4">
+                    <small class="d-flex justify-content-center justify-content-md-start gap-3 flex-wrap">
+                        <a class="footer-link" href="https://github.com/mckenziesoftware/myficdb">GitHub</a>
+                        <a class="footer-link" href="https://github.com/mckenziesoftware/myficdb/wiki">Documentation</a>
+                        <a class="footer-link"
+                           asp-area="SystemManagement"
+                           asp-controller="SystemManagement"
+                           asp-action="Licences">
+                            Licences
+                        </a>
+                    </small>
+                </div>
+
+                <!-- Center: Logo -->
+                <div class="col-12 col-md-4 text-center">
+                    <img src="/images/app-logo.png" alt="MyFicDB" style="width: 28px; height: 28px;" />
+                </div>
+
+                <!-- Right: Years + Origin -->
+                <div class="col-12 col-md-4">
+                    <small class="d-flex flex-column align-items-center align-items-md-end">
+                        <span>
+                            <span id="f-start-year" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title=""></span>
+                            –
+                            <span id="f-current-year" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title=""></span>
+                        </span>
+                        <span>Made in Scotland</span>
+                    </small>
+                </div>
+
+            </div>
+
+        </div>
+    </footer>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            tooltipTriggerList.forEach(el => {
+                new bootstrap.Tooltip(el);
+            });
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

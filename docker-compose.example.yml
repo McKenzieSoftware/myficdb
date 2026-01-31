@@ -1,0 +1,49 @@
+#
+# Ports:
+#   To change the port from 8080, change the port before the colon and not after. For example if you want to access MyFicDB on Port 1111, you would
+#   have "1111:8080". 
+#
+# Environment:
+#   By default the database and logs are stored in /data/database and /data/logs within the container.  You can change this if you want to, however
+#   I would recommend leaving as is.  If you do change it, make sure to modify the mounts under volumes.
+#
+#   MYFICDB_RESET_PASSWORD and MYFIC_DB_RESET_PASSWORD_VALUE are used in case you forgot the password to your MyFicDB account.  By default this is set to
+#   false and I would recommend removing it from the docker-compose entirely unless you are using it.  To use it, set MYFICDB_RESET_PASSWORD to true and then 
+#   enter a password in MYFICDB_RESET_PASSWORD_VALUE.
+#
+# Volumes:
+#   In theory the below configuration should work.  It creates the mounts in the location of the docker-compose.yml file when you run docker compose up -d.
+#
+#   Volumes > Custom.css
+#     If you are wanting to use custom.css, make sure that you have created the file on the HOST (i.e your machine/server) and then uncomment the commented
+#     line under volumes and start the container using the docker compose up -d command.
+#
+# Resource Limits:
+#   During testing I found that having CPUs limited to 0.5 and memory limited to 256M was more than enough.  If you find that MyFicDB starts to run slower
+#   or has performance issues, increase these limits.  I'd recommend leaving them as is unless you have performance issues though.
+#
+services:
+  myficdb:
+    image: lyeuhm/myficdb:latest
+    ports:
+      - "8080:8080" # Change the port at the start, not after the colon.
+    environment:
+      MYFICDB_DB_PATH: /data/database
+      MYFICDB_SQLITE_COMMAND_TIMEOUT: 30
+
+      MYFICDB_LOGS_PATH: /data/logs
+
+      # If you forget your account password, you can reset it with the below.  
+      # Set the value to TRUE and then enter the password you want.
+      MYFICDB_RESET_PASSWORD: false
+      MYFICDB_RESET_PASSWORD_VALUE: ""
+
+    volumes:
+      - ./data:/data # Change the path at the START, not after the colon UNLESS you change the data path in MYFIC_DB_PATH/MYFICDB_LOGS_PATH
+    #  - ./custom-css/custom.css:/app/wwwroot/css/custom.css
+    deploy:
+      resources:
+          limits:
+            cpus: '0.5'
+            memory: 256M 
+    restart: unless-stopped

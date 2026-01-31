@@ -1,0 +1,69 @@
+﻿@model IReadOnlyList<MyFicDB.Core.Models.Series>
+
+@{
+    ViewData["Title"] = "Series";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+        <h1 class="mb-1">Series</h1>
+        <div class="text-body-secondary">Browse all Series.</div>
+    </div>
+</div>
+
+@if (Model is null || Model.Count == 0)
+{
+    <div class="alert alert-secondary">
+        No series have been created yet. To create a new series, <a class="ms-1" asp-controller="Stories" asp-action="Create">create a new story</a> or edit an existing one.
+    </div>
+}
+else
+{
+    var assigned = Model.Where(s => s.StorySeries.Any()).OrderBy(s => s.Name);
+    if (assigned.Any())
+    {
+        <div class="card shadow-sm">
+            <div class="card-header">
+                Series assigned to at least one Story
+            </div>
+            <div class="card-body">
+                <div class="mfdb-tag-cloud">
+                    @foreach (var series in assigned)
+                    {
+                        <a class="mfdb-tag-pill"
+                           asp-controller="Series"
+                           asp-action="View"
+                           asp-route-slug="@series.Slug"
+                           title="@series.Name">
+                            @series.Name
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    var unassigned = Model.Where(s => !s.StorySeries.Any()).OrderBy(s => s.Name);
+    if (unassigned.Any())
+    {
+        <div class="card shadow-sm mt-4">
+            <div class="card-header">
+                Series with no Story
+            </div>
+            <div class="card-body">
+                <div class="mfdb-tag-cloud">
+                    @foreach (var series in unassigned)
+                    {
+                        <a class="mfdb-tag-pill"
+                           asp-controller="Series"
+                           asp-action="View"
+                           asp-route-slug="@series.Slug"
+                           title="@series.Name">
+                            @series.Name
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}

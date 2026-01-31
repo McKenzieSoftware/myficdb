@@ -1,0 +1,352 @@
+﻿@using MyFicDB.Web.ViewModels.Story
+@model StoryViewViewModel
+@{
+    ViewData["Title"] = $"Story: {Model.Title}";
+}
+
+<div class="d-flex flex-column flex-lg-row align-items-start justify-content-between gap-3 mb-3">
+    <div>
+        <h1 class="mb-1">@Model.Title</h1>
+        <div class="text-body-secondary">
+            @if (Model.StorySeries?.Any() == true)
+            {
+                var series = Model.StorySeries.ToList(); for (int i = 0; i < series.Count; i++)
+                {
+                    <a asp-controller="Series" asp-action="View" asp-route-slug="@series[i].Slug" class="position-relative text-decoration-none"
+                       style="z-index: 2;">@series[i].Name</a>@(i < series.Count - 1 ? ", " : "")
+                    /* Comma has to go on the same line as the Series Name or Razor adds whitespace to both ends */
+                }
+            }
+        </div>
+    </div>
+
+    <div class="d-flex gap-2 align-self-start align-self-md-end">
+        <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+
+        <div class="dropdown">
+            <button class="btn btn-outline-primary dropdown-toggle"
+                    type="button"
+                    id="exportDropdown"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                Export
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="exportDropdown">
+                <li>
+                    <form method="post" asp-action="Export" asp-route-id="@Model.Id" asp-route-type="html" class="dropdown-item p-0">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="dropdown-item w-100 text-start">
+                            Export as HTML
+                        </button>
+                    </form>
+                </li>
+                <li>
+                    <form method="post" asp-action="Export" asp-route-id="@Model.Id" asp-route-type="markdown" class="dropdown-item p-0">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="dropdown-item w-100 text-start">
+                            Export as Markdown
+                        </button>
+                    </form>
+                </li> 
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card shadow-sm mb-3">
+            <div class="card-header">Synopsis</div>
+            <div class="card-body">
+                @if (string.IsNullOrWhiteSpace(Model.Summary))
+                {
+                    <div class="text-body-secondary">No synopsis.</div>
+                }
+                else
+                {
+                    @Html.Raw(Model.Summary)
+                }
+            </div>
+        </div>
+
+        @if(Model.StoryActors.Any())
+        {
+            <div class="card shadow-sm mb-3">
+                <div class="card-header">Actors</div>
+                <div class="card-body">
+
+                    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-3 row-cols-lg-5 g-4 mb-3">
+                        @foreach (var actor in Model.StoryActors)
+                        {
+                            <a asp-controller="Actors" asp-action="View" asp-route-slug="@actor.Slug" class="text-decoration-none text-reset d-block">
+                                <div class="col">
+                                    <div class="text-center fw-semibold mb-2 text-truncate" title="@actor.Name">
+                                        @actor.Name
+                                    </div>
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div style="width: 150px; height: 150px; flex: 0 0 auto;">
+                                            <img src="@Url.Action("Image", "Actors", new { slug = actor.Slug })"
+                                                 alt="@actor.Name"
+                                                 class="rounded border img-fluid w-100 h-100"
+                                                 style="object-fit: cover;" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.Notes))
+        {
+        <div class="card shadow-sm">
+            <div class="card-header">Editoral Notes</div>
+            <div class="card-body">
+                @Model.Notes
+            </div>
+        </div>
+        }
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm mb-3">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <span>Chapters</span>
+                <a class="btn btn-sm btn-primary"
+                   asp-controller="Chapters"
+                   asp-action="Create"
+                   asp-route-storyId="@Model.Id">
+                    Add Chapter
+                </a>
+            </div>
+            <div class="card-body">
+                @if (Model.Chapters is null || Model.Chapters.Count == 0)
+                {
+                    <div class="text-body-secondary">No chapters yet.</div>
+                }
+                else
+                {
+                    <ol class="mb-0">
+                        @foreach (var ch in Model.Chapters.OrderBy(c => c.ChapterNumber))
+                        {
+                            <li>
+                                <a class="text-decoration-none"
+                                   asp-controller="Chapters"
+                                   asp-action="View"
+                                   asp-route-storyId="@Model.Id"
+                                   asp-route-chapterNumber="@ch.ChapterNumber">
+                                    Chapter @ch.ChapterNumber
+                                    @if (!string.IsNullOrWhiteSpace(ch.Title))
+                                    {
+                                        <span class="text-body-secondary">— @ch.Title</span>
+                                    }
+                                </a>
+                            </li>
+
+                        }
+                    </ol>
+                }
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-3">
+            <div class="card-header">Tags</div>
+            <div class="card-body mfdb-tag-cloud">
+                @if (Model.StoryTags?.Any() == true)
+                {
+                    <div class="mb-2 d-flex flex-wrap gap-1">
+                        @foreach (var st in Model.StoryTags)
+                        {
+                            <a asp-controller="Tags"
+                               asp-action="View"
+                               asp-route-slug="@st.Slug"
+                               class="mfdb-tag-pill mb-0">
+                                @st.Name
+                            </a>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="mb-2 text-body-secondary">No tags</div>
+                }
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header">Metadata</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+
+                    @if (Model.IsNsfw)
+                    {
+                        <dt class="col-6">Nut Count</dt>
+                        <dd class="col-6 mb-2">
+                            <div class="d-inline-flex align-items-center gap-2">
+                                @Html.AntiForgeryToken()
+                                <button type="button"
+                                        class="btn btn-link p-0 text-body-secondary nut-btn"
+                                        aria-label="Remove Nut"
+                                        data-delta="-1">
+                                    <i class="bi bi-dash"></i>
+                                </button>
+
+                                <strong id="nutCounter">@Model.NutCounter</strong>
+
+                                <button type="button"
+                                        class="btn btn-link p-0 text-body-secondary nut-btn"
+                                        aria-label="Add Nut"
+                                        data-delta="1">
+                                        <i class="bi bi-plus"></i>
+                                </button>
+
+                            </div>
+                        </dd>
+                    }
+
+                    <dt class="col-6">Read Count</dt>
+                    <dd class="col-6 mb-2">
+                        <div class="d-inline-flex align-items-center gap-2">
+                            @Html.AntiForgeryToken()
+                            <button type="button"
+                                    class="btn btn-link p-0 text-body-secondary read-btn"
+                                    aria-label="Remove Read"
+                                    data-delta="-1">
+                                <i class="bi bi-dash"></i>
+                            </button>
+
+                            <strong id="readCounter">@Model.ReadCounter</strong>
+
+                            <button type="button"
+                                    class="btn btn-link p-0 text-body-secondary read-btn"
+                                    aria-label="Add Read"
+                                    data-delta="1">
+                                <i class="bi bi-plus"></i>
+                            </button>
+
+                        </div>
+                    </dd>
+
+                    <dt class="col-6 mfdb-with-divider">AI Generated</dt>
+                    <dd class="col-6 mb-2 mfdb-with-divider">
+                        <span class="badge @(Model.IsAIGenerated ? "bg-warning text-dark" : "bg-secondary")">
+                            @(Model.IsAIGenerated ? "Yes" : "No")
+                        </span>
+                    </dd>
+
+                    <dt class="col-6">Own Work</dt>
+                    <dd class="col-6 mb-2">
+                        <span class="badge @(Model.IsOwnWork ? "bg-success" : "bg-secondary")">
+                            @(Model.IsOwnWork ? "Yes" : "No")
+                        </span>
+                    </dd>
+
+                    <dt class="col-6">NSFW</dt>
+                    <dd class="col-6 mb-2">
+                        <span class="badge @(Model.IsNsfw ? "bg-danger" : "bg-secondary")">
+                            @(Model.IsNsfw ? "Yes" : "No")
+                        </span>
+                    </dd>
+
+@* Don't re introduce these until modifying the default Save Behviour to prevent NutCount and ReadCount from modifying the Update Date *@
+
+@*                     <dt class="col-6">Created</dt>
+                    <dd class="col-6 mb-2">
+                        @Model.CreatedDate
+                    </dd>
+
+                    <dt class="col-6">Updated</dt>
+                    <dd class="col-6 mb-2">
+                        @Model.UpdatedDate
+                    </dd> *@
+
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+          const storyId = "@Model.Id";
+          const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+          if (!storyId || !token)
+          {
+              return;
+          }
+
+          function wireDeltaCounter({ counterId, buttonSelector, endpoint, responseField }) {
+            const counterEl = document.getElementById(counterId);
+            const buttons = document.querySelectorAll(buttonSelector);
+
+            if (!counterEl || buttons.length === 0) 
+            {
+                return;
+            }
+
+            const parseCounter = () => parseInt(counterEl.textContent, 10) || 0;
+
+            async function sendDelta(delta) {
+              const oldValue = parseCounter();
+              const optimistic = Math.max(0, oldValue + delta);
+              counterEl.textContent = optimistic;
+
+              try {
+                const res = await fetch(endpoint, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "RequestVerificationToken": token
+                  },
+                  body: JSON.stringify({ delta })
+                });
+
+                if (!res.ok) 
+                {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+
+                const data = await res.json();
+                const serverValue = Number(data?.[responseField]);
+
+                // If server didn't return a sane number
+                if (Number.isFinite(serverValue)) {
+                  counterEl.textContent = Math.max(0, serverValue);
+                }
+              } catch {
+                counterEl.textContent = oldValue;
+              }
+            }
+
+            buttons.forEach(btn => {
+              btn.addEventListener("click", () => {
+                const delta = parseInt(btn.dataset.delta, 10);
+                if (!Number.isFinite(delta)) return;
+                sendDelta(delta);
+              });
+            });
+          }
+
+          wireDeltaCounter({
+            counterId: "nutCounter",
+            buttonSelector: ".nut-btn",
+            endpoint: `/story/${storyId}/nut`,
+            responseField: "NutCounter"
+          });
+
+          wireDeltaCounter({
+            counterId: "readCounter",
+            buttonSelector: ".read-btn",
+            endpoint: `/story/${storyId}/read`,
+            responseField: "ReadCounter"
+          });
+        })();
+    </script>
+}

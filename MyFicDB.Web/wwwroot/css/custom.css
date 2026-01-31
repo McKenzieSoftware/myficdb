@@ -1,0 +1,20 @@
+﻿/*
+
+    Use this file for any custom styling that you'd like to use for MyFicDB.  Note that this file may (will?) be overwritten with updates, so it's recommended that you
+    take a backup after you modify it.
+
+    Handy helpers to prevent breaking light/dark mode.  The below will change the color of all links to the color defined
+
+    Dark Mode:
+    [data-bs-theme="dark"] a
+    {
+        color: red;
+    }
+
+    Light Mode:
+    [data-bs-theme="light"] a
+    {
+        color: pink;
+    }
+
+*/

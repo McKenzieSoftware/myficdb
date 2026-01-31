@@ -1,0 +1,392 @@
+﻿@using MyFicDB.Web.Areas.SystemManagement.ViewModels;
+@model SystemManagementViewModel
+
+@{
+    ViewData["Title"] = "System Management";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+        <h1 class="mb-1">System Management</h1>
+        <div class="text-body-secondary">System Status and Information, Updates and Owner Actions.</div>
+    </div>
+</div>
+
+<div class="row g-4">
+    @* left *@
+    <div class="col-12 col-lg-7">
+        <div class="card border-0">
+            <div class="card-body p-0">
+                <div class="d-flex align-items-start justify-content-between gap-3">
+                    <div>
+                        <h2 class="h5 mb-1">Version</h2>
+                        <div class="text-body-secondary small">Version and Build Information.</div>
+                    </div>
+                </div>
+
+                <hr class="my-3" />
+
+                <div class="row g-3">
+                    <div class="col-6 col-md-6">
+                        <div class="text-body-secondary small mb-1">Installed</div>
+                        <div class="fw-semibold">
+                            <span data-bs-toggle="tooltip"
+                                  data-bs-placement="top"
+                                  data-bs-html="true"
+                                  data-bs-title="<strong>Build</strong>: @Model.UpdateInformation.InstalledBuildDate <br/> <strong>SHA</strong>: @Model.UpdateInformation.InstalledGitSha">
+                                @Model.UpdateInformation.InstalledVersion
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-6 col-md-6">
+                        <div class="text-body-secondary small mb-1">Latest (GitHub)</div>
+                        <div class="fw-semibold">
+                            <a class="text-decoration-none" href="https://github.com/McKenzieSoftware/MyFicDB/wiki/Application-Update">@Model.UpdateInformation.LatestVersion</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-3 mb-0 small">
+                    <div class="card-body">
+                        <pre>@Model.UpdateInformation.ReleaseContent</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 mt-4">
+            <div class="card-body p-0">
+                <div class="d-flex flex-column flex-lg-row align-items-start justify-content-between gap-3">
+                    <div>
+                        <h2 class="h5 mb-1">Database Health Check</h2>
+                        <div class="text-body-secondary small">Just some basic info about your database.  This runs every 12 hours.</div>
+                    </div>
+                </div>
+
+                <hr class="my-3" />
+
+                <div class="row g-3" id="dbHealthPanel">
+                    <div class="col-12 col-md-6">
+                        <div class="border rounded-3 p-3 bg-body h-100">
+                            <div class="text-body-secondary small">Connection status</div>
+                            <div class="fw-semibold" id="dbHealth-connectionStatus">Loading…</div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <div class="border rounded-3 p-3 bg-body h-100">
+                            <div class="text-body-secondary small">Integrity check</div>
+                            <div class="fw-semibold" id="dbHealth-integrity">Loading…</div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <div class="border rounded-3 p-3 bg-body h-100">
+                            <div class="text-body-secondary small">Database size</div>
+                            <div class="fw-semibold" id="dbHealth-size">Loading…</div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <div class="border rounded-3 p-3 bg-body h-100">
+                            <div class="text-body-secondary small">Last successful run</div>
+                            <div class="fw-semibold" id="dbHealth-lastOk">Loading…</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card border-0 mt-4">
+            <div class="card-body p-0">
+                <div class="d-flex align-items-start justify-content-between gap-3">
+                    <div>
+                        <h2 class="h5 mb-1">System Information</h2>
+                        <div class="text-body-secondary small">System Uptime and App Usage</div>
+                    </div>
+                    <div class="d-flex gap-2 align-self-start align-self-md-end">
+                        <button id="refreshData"
+                                type="button"
+                                class="btn btn-link p-0 bi bi-arrow-clockwise text-decoration-none">
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <hr class="my-3" />
+
+                @{
+                    if (Model.SystemInfo is not null)
+                    {
+                        <div class="text-uppercase text-body-secondary small fw-semibold mb-2" id="section_operationl">
+                            Operational
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <div class="border rounded-3 p-3 bg-body">
+                                    <div class="text-body-secondary small">Uptime</div>
+                                    <div class="fw-semibold" id="sysInfo-systemUptime">Loading…</div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div class="border rounded-3 p-3 bg-body">
+                                    <div class="text-body-secondary small">Start Time & Date</div>
+                                    <div class="fw-semibold">@Model.SystemInfo.StartTime</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <div class="text-uppercase text-body-secondary small fw-semibold mb-2" id="section_totals">
+                            Content totals
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-6 col-md-3">
+                                <div class="border rounded-3 p-3 bg-body h-100">
+                                    <div class="text-body-secondary small">Stories</div>
+                                    <div class="fw-semibold">@Model.SystemInfo.StoriesTotal</div>
+                                </div>
+                            </div>
+
+                            <div class="col-6 col-md-3">
+                                <div class="border rounded-3 p-3 bg-body h-100">
+                                    <div class="text-body-secondary small">Tags</div>
+                                    <div class="fw-semibold">@Model.SystemInfo.TagsTotal</div>
+                                </div>
+                            </div>
+
+                            <div class="col-6 col-md-3">
+                                <div class="border rounded-3 p-3 bg-body h-100">
+                                    <div class="text-body-secondary small">Series</div>
+                                    <div class="fw-semibold">@Model.SystemInfo.SeriesTotal</div>
+                                </div>
+                            </div>
+
+                            <div class="col-6 col-md-3">
+                                <div class="border rounded-3 p-3 bg-body h-100">
+                                    <div class="text-body-secondary small">Actors</div>
+                                    <div class="fw-semibold">@Model.SystemInfo.ActorsTotal</div>
+                                </div>
+                            </div>
+                            
+                            @if(Model.SystemInfo.NsfwTotal > 0)
+                            {
+                                <div class="col-6 col-md-3">
+                                    <div class="border rounded-3 p-3 bg-body h-100">
+                                        <div class="text-body-secondary small">Nuts</div>
+                                        <div class="fw-semibold">@Model.SystemInfo.NutTotal</div>
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="col-6 col-md-3">
+                                <div class="border rounded-3 p-3 bg-body h-100">
+                                    <div class="text-body-secondary small">Reads</div>
+                                    <div class="fw-semibold">@Model.SystemInfo.ReadTotal</div>
+                                </div>
+                            </div>
+                        </div>
+                    } 
+                    else
+                    {
+                        <div class="alert alert-warning small mt-3 mb-0" role="alert">
+                            System Information is not currently available.  Check logs for more information.
+                        </div>
+                    }
+                }
+
+            </div>
+        </div>
+
+        <div class="card border-0 mt-4">
+            <div class="card-body p-0">
+                <div class="d-flex align-items-start justify-content-between gap-3">
+                    <div>
+                        <h2 class="h5 mb-1">Logs</h2>
+                        <div class="text-body-secondary small">Troubleshooting logs for this instance</div>
+                    </div>
+                </div>
+
+                <hr class="my-3" />
+
+                @if (Model.Logs == null || !Model.Logs.Any())
+                {
+                    <div class="text-body-secondary small">No log files were found.</div>
+                }
+                else
+                {
+                    <div class="list-group">
+                        @foreach (var log in Model.Logs)
+                        {
+                            <a class="list-group-item list-group-item-action d-flex align-items-center justify-content-between"
+                               asp-action="LogRaw"
+                               asp-route-fileName="@log.FileName"
+                               target="_blank"
+                               rel="noopener">
+                                <div class="d-flex flex-column">
+                                    <span class="fw-semibold text-truncate">@log.FileName</span>
+                                    <span class="text-body-secondary small">Open raw in a new tab</span>
+                                </div>
+                                <span class="ms-3 text-body-secondary small">Open</span>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    @* right *@
+    <div class="col-12 col-lg-5">
+        <div class="card border-0 position-sticky" style="top: 1rem;">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between gap-3">
+                    <div>
+                        <h2 class="h5 mb-1">System Actions</h2>
+                        <div class="text-body-secondary small">Exports, backups, diagnostics, and destructive operations.</div>
+                    </div>
+                </div>
+
+                <hr class="my-3" />
+
+                <div class="vstack gap-3">
+                    <div class="p-3 rounded-3 border bg-body" id="section_stories_export">
+                        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
+                            <div>
+                                <div class="fw-semibold">Export your stories</div>
+                                <div class="text-body-secondary small">
+                                    Export all stories in HTML format as a compressed archive.
+                                </div>
+                            </div>
+
+                            <form id="export-stories" asp-action="ExportAllStories" method="post" class="m-0">
+                                @Html.AntiForgeryToken()
+                                <button class="btn btn-primary" type="submit">
+                                    Export
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded-3 border bg-body" id="section_download_database">
+                        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
+                            <div>
+                                <div class="fw-semibold">Download Database Backup</div>
+                                <div class="text-body-secondary small">
+                                    Download a snapshot of the application database. Recommended before resets.
+                                </div>
+                            </div>
+
+                            <form id="download-database" asp-action="DownloadDatabase" method="post" class="m-0">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-primary">
+                                    Download
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+@*                     <div class="p-3 rounded-3 border bg-body" id="section_support_bundle">
+                        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
+                            <div>
+                                <div class="fw-semibold">Export Support Bundle</div>
+                                <div class="text-body-secondary small">
+                                    Export support bundle. <a href="https://github.com/McKenzieSoftware/MyFicDB/wiki/">What's included?</a>
+                                </div>
+                            </div>
+
+                            <form id="export-diagnostics" asp-action="ExportDiagnosticBundle" method="post" class="m-0">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-primary disabled">
+                                    Export
+                                </button>
+                            </form>
+                        </div>
+                    </div> *@
+
+                    <div class="p-3 rounded-3 border border-danger-subtle bg-body" id="section_reset_system">
+                        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
+                            <div>
+                                <div class="fw-semibold">Reset system</div>
+                                <div class="text-body-secondary small">
+                                    Permanently removes all data from the system. This action cannot be reversed.
+                                </div>
+                            </div>
+
+                            <a id="reset-system" asp-action="Reset" class="btn btn-danger">
+                                Reset
+                            </a>
+                        </div>
+
+                        <div class="alert alert-danger small mt-3 mb-0" role="alert">
+                            Ensure you have a database backup before proceeding.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-body-secondary small mt-3">
+                    <strong>Tip</strong>: Exports for portability, Database Backups for Full Restore.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts 
+{
+    <script>
+        function refreshData()
+        {
+            fetch("/api/v1/db/health")
+                .then(r => r.ok ? r.json() : null)
+                .then(d => {
+
+                    if(!d)
+                    {
+                        return;
+                    }
+
+                    document.getElementById('dbHealth-connectionStatus').textContent = d.canConnect ? "OK" : "FAILING";
+
+                    document.getElementById('dbHealth-integrity').textContent = d.integrity;
+
+                    document.getElementById('dbHealth-size').textContent = d.sizeFormatted;
+
+                    document.getElementById('dbHealth-lastOk').textContent = d.lastOkUtc ? new Date(d.lastOkUtc).toLocaleString() : 'Never';
+                })
+                .catch(() =>
+                {
+                    document.getElementById('dbHealth-connectionStatus').textContent = 'Unavailable';
+                });
+ 
+            fetch("/api/v1/system/uptime")
+                .then(r => r.ok ? r.json() : null)
+                .then(d => {
+
+                    if(!d)
+                    {
+                        return;
+                    }
+
+                    document.getElementById('sysInfo-systemUptime').textContent = d.uptime;
+                })
+                .catch(() =>
+                {
+                    document.getElementById('sysInfo-systemUptime').textContent = "Unavailable";
+                })
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("refreshData")
+                .addEventListener("click", refreshData);
+        });
+
+        refreshData();
+    </script>
+}

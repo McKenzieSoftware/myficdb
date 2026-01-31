@@ -1,0 +1,52 @@
+﻿@page
+@model ResetAuthenticatorModel
+@{
+    ViewData["Title"] = "Reset authenticator key";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+
+@section PageSubtitle {
+        Reset your authenticator key and reconfigure your authenticator app.
+}
+
+<div class="mt-2">
+    <div class="alert alert-warning" role="alert">
+        <strong>If you reset your authenticator key, your authenticator app will not work until you reconfigure it.</strong>
+        <div class="mt-1">
+            This process disables 2FA until you verify your authenticator app.
+            If you do not complete authenticator setup, you may lose access to your account.
+        </div>
+    </div>
+
+    <form id="reset-authenticator-form" method="post" class="card shadow-sm">
+        @Html.AntiForgeryToken()
+
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="text-body-secondary">
+                        Resetting your authenticator key will require you to scan a new QR code in your authenticator app and confirm it.
+                        Your existing authenticator codes will stop working immediately.
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <hr class="my-2" />
+                    <div class="d-flex gap-2">
+                        <button id="reset-authenticator-button" type="submit" class="btn btn-danger">
+                            Reset authenticator key
+                        </button>
+
+                        <a asp-page="./TwoFactorAuthentication" class="btn btn-outline-secondary">
+                            Back
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

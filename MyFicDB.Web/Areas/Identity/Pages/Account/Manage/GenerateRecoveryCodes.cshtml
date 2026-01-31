@@ -1,0 +1,55 @@
+﻿@page
+@model GenerateRecoveryCodesModel
+@{
+    ViewData["Title"] = "Recovery codes";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+
+@section PageSubtitle {
+        Generate a new set of recovery codes and store them somewhere safe.
+}
+
+<partial name="_StatusMessage" for="StatusMessage" />
+
+<div class="mt-2">
+    <div class="alert alert-warning" role="alert">
+        <strong>Put these codes in a safe place.</strong>
+        <div class="mt-1">
+            If you lose your device and don't have recovery codes, you may lose access to your account.
+        </div>
+        <div class="mt-2">
+            Generating new recovery codes does not change your authenticator app keys. If you want to change the key used
+            in your authenticator app, <a asp-page="./ResetAuthenticator">reset your authenticator</a>.
+        </div>
+    </div>
+
+    <form method="post" class="card shadow-sm">
+        @Html.AntiForgeryToken()
+
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="text-body-secondary">
+                        This action invalidates any existing recovery codes and generates a new set.
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            Generate recovery codes
+                        </button>
+
+                        <a asp-page="./TwoFactorAuthentication" class="btn btn-outline-secondary">
+                            Back
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,81 @@
+﻿@using MyFicDB.Core.Extensions
+@using MyFicDB.Core.Helpers
+@using MyFicDB.Web.ViewModels.Series
+@model SeriesViewViewModel
+
+@{
+    ViewData["Title"] = $"Series: {Model.Name}";
+}
+
+<div class="d-flex flex-column flex-lg-row align-items-start justify-content-between gap-3 mb-3">
+    <div>
+        <h1 class="mb-1">
+            <span class="text-body-secondary">Series:</span> @Model.Name
+        </h1>
+        <div class="text-body-secondary">
+            @Model.Stories.Count stor@(Model.Stories.Count == 1 ? "y" : "ies")
+        </div>
+    </div>
+
+    <div class="d-flex gap-2 align-self-start align-self-md-end">
+        <form asp-action="Delete"
+              asp-route-slug="@Model.Slug"
+              method="post"
+              id="deleteSeriesForm">
+            @Html.AntiForgeryToken()
+
+            <button type="button"
+                    class="btn btn-danger"
+                    data-bs-toggle="modal"
+                    data-bs-target="#deleteSeriesModal">
+                Delete
+            </button>
+        </form>
+    </div>
+</div>
+
+@if (Model.Stories.Count == 0)
+{
+    <div class="alert alert-secondary mb-0">
+        No stories are currently in <strong>@Model.Name</strong>.
+    </div>
+}
+else
+{
+    <div class="card shadow-sm">
+        <div class="list-group list-group-flush">
+            @foreach (var story in Model.Stories)
+            {
+                <a class="list-group-item list-group-item-action"
+                   asp-controller="Stories"
+                   asp-action="View"
+                   asp-route-id="@story.StoryId">
+                    <div class="d-flex w-100 justify-content-between align-items-start">
+                        <div class="me-3">
+                            <div class="fw-semibold">@story.Title</div>
+
+                            @if (!string.IsNullOrWhiteSpace(story.Summary))
+                            {
+                                <div class="text-body-secondary small">
+                                    @story.Summary.TruncateWords(40)
+                                </div>
+                            }
+                        </div>
+
+                        <span class="badge text-bg-light border">
+                            @story.ChapterCount ch
+                        </span>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+}
+
+@await Html.PartialAsync("_ConfirmDeleteModalPartial", new ConfirmDeleteModalViewModel
+{
+    ModalId = "deleteSeriesModal",
+    LabelId = "deleteSeriesModalLabel",
+    FormId = "deleteSeriesForm",
+    ItemLabel = "series"
+})

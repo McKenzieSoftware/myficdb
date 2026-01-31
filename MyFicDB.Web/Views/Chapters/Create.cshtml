@@ -1,0 +1,65 @@
+﻿@using MyFicDB.Web.ViewModels.Chapter
+@model ChapterCreateViewModel
+
+@{
+    ViewData["Title"] = "Add chapter";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+        <h1 class="mb-1">Add chapter</h1>
+        <div class="text-body-secondary">@Model.StoryTitle</div>
+    </div>
+
+    <a class="btn btn-outline-secondary" asp-controller="Stories" asp-action="View" asp-route-id="@Model.StoryId">
+        Back to story
+    </a>
+</div>
+
+<form method="post" class="card shadow-sm">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="StoryId" />
+    <input type="hidden" asp-for="StoryTitle" />
+
+    <div class="card-body">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input asp-for="ChapterNumber" class="form-control" placeholder="1" />
+                    <label asp-for="ChapterNumber"></label>
+                </div>
+                <span asp-validation-for="ChapterNumber" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-8">
+                <div class="form-floating">
+                    <input asp-for="Title" class="form-control" placeholder="Chapter title (optional)" />
+                    <label asp-for="Title">Title (optional)</label>
+                </div>
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <label asp-for="Body" class="form-label"></label>
+            <textarea asp-for="Body" id="TinyMCE-Editor" class="form-control wysiwyg" rows="12"></textarea>
+            <span asp-validation-for="Body" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="card-footer d-flex gap-2 justify-content-end">
+        <a class="btn btn-outline-secondary" asp-controller="Stories" asp-action="View" asp-route-id="@Model.StoryId">
+            Cancel
+        </a>
+        <button type="submit" class="btn btn-primary">Add chapter</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script src="~/lib/tinymce/tinymce.min.js" asp-append-version="true" referrerpolicy="origin"></script>
+    <script src="~/js/tinymce-theme-switch.js" asp-append-version="true" referrerpolicy="origin"></script>
+}

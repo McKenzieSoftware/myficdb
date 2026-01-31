@@ -1,0 +1,74 @@
+﻿@{
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout != null)
+    {
+        Layout = parentLayout.ToString();
+    }
+    else
+    {
+        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    }
+
+    var title = (ViewData["Title"] as string) ?? "Account";
+
+    var statusMessage =
+        ViewData["StatusMessage"] as string ??
+        TempData["StatusMessage"] as string;
+}
+
+<div class="container">
+    <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between mb-3">
+        <div>
+            <h1 class="mb-1">Account</h1>
+            <div class="text-body-secondary">Manage your profile, security, and system data.</div>
+        </div>
+
+        @if (IsSectionDefined("PageActions"))
+        {
+            <div class="mt-3 mt-md-0">
+                @RenderSection("PageActions", required: false)
+            </div>
+        }
+    </div>
+
+    <div class="row g-3">
+        <div class="col-12 col-lg-4 col-xl-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div>
+                            <div class="fw-semibold">Settings</div>
+                            <div class="small text-body-secondary">Choose a section</div>
+                        </div>
+                    </div>
+
+                    <partial name="./Manage/_ManageNav" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-8 col-xl-9">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+                        <div>
+                            <h2 class="h4 mb-1">@title</h2>
+                            @if (IsSectionDefined("PageSubtitle"))
+                            {
+                                <div class="text-body-secondary">
+                                    @RenderSection("PageSubtitle", required: false)
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <partial name="_StatusMessage" model="statusMessage" />
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

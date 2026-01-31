@@ -1,0 +1,148 @@
+﻿@using MyFicDB.Web.Areas.SystemManagement.ViewModels
+@model IReadOnlyList<NuGetLicenceViewModel>
+
+@{
+    ViewData["Title"] = "Licences";
+    var total = Model?.Count ?? 0;
+}
+
+<div class="d-flex align-items-start justify-content-between mb-3">
+    <div>
+        <h1 class="mb-1">Licences</h1>
+        <div class="text-body-secondary">
+            Third-party packages used by MyFicDB
+        </div>
+    </div>
+
+    <div class="text-end">
+        <div class="fw-semibold">@total</div>
+        <div class="text-body-secondary small">packages</div>
+    </div>
+</div>
+
+@if (total == 0)
+{
+    <div class="alert alert-warning">
+        No licence data was found. Ensure <code>wwwroot/licences/licences.json</code> exists and is valid JSON.
+    </div>
+}
+else
+{
+    <div id="licenseList" class="vstack gap-2">
+        @for (var i = 0; i < Model!.Count; i++)
+        {
+            var pkg = Model[i];
+            var collapseId = $"pkg_{i}";
+            var packageVersionFormatted = $"v{@pkg.PackageVersion}";
+
+            <div class="card shadow-sm license-item">
+                <div class="card-body">
+                    <div class="d-flex align-items-start justify-content-between gap-3">
+                        <div class="min-w-0">
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <div class="fw-semibold text-truncate" title="@pkg.DisplayName">
+                                    @pkg.PackageName
+                                    <span class="text-body-secondary fw-normal">@packageVersionFormatted</span>
+                                </div>
+
+                                @* Licence badge *@
+                                <span class="badge rounded-pill text-bg-light border">
+                                    @{
+                                        if (string.IsNullOrWhiteSpace(@pkg.LicenceType))
+                                        {
+                                            @: Unknown
+                                        } else
+                                        {
+                                            @pkg.LicenceType
+                                        }
+                                    }
+                                </span>
+
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(pkg.Description))
+                            {
+                                <div class="text-body-secondary small mt-1">
+                                    @pkg.Description
+                                </div>
+                            }
+                        </div>
+
+                        <div class="text-end flex-shrink-0">
+                            <button class="btn btn-sm btn-outline-secondary"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#@collapseId"
+                                    aria-expanded="false"
+                                    aria-controls="@collapseId">
+                                Details
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="@collapseId" class="collapse mt-3">
+                        <div class="border-top pt-3">
+                            <div class="row g-3 small">
+                                <div class="col-md-6">
+                                    <div class="text-body-secondary">Authors</div>
+                                    <div class="fw-semibold">
+                                        @(pkg.Authors is { Count: > 0 } ? string.Join(", ", pkg.Authors) : "Unknown")
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="text-body-secondary">Package</div>
+                                    <div class="fw-semibold">@pkg.DisplayName</div>
+                                </div>
+
+                                @if (pkg.Repository is not null && (pkg.Repository.HasUrl || pkg.Repository.HasCommit))
+                                {
+                                    <div class="col-md-6">
+                                        <div class="text-body-secondary">Repository</div>
+
+                                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                                            @if (pkg.Repository.HasUrl)
+                                            {
+                                                <a href="@pkg.Repository.UrlNormalized"
+                                                   target="_blank"
+                                                   rel="noopener"
+                                                   class="text-decoration-none">
+                                                    @pkg.Repository.UrlNormalized
+                                                </a>
+                                            }
+
+                                            @if (pkg.Repository.HasCommit)
+                                            {
+                                                <span class="badge text-bg-light border">
+                                                    commit @pkg.Repository.Commit
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+
+                                @if (!string.IsNullOrWhiteSpace(pkg.LicenceUrl))
+                                {
+                                    <div class="col-md-6">
+                                        <div class="text-body-secondary">License</div>
+                                        <div class="fw-semibold">
+                                            <a class="text-decoration-none"
+                                               href="@pkg.LicenceUrl"
+                                               target="_blank"
+                                               rel="noopener">
+                                                @pkg.LicenceUrl
+                                            </a>
+                                        </div>
+                                    </div>
+                                }
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,92 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<ul class="navbar-nav align-items-lg-center gap-2">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 mfdb-app-userlink" href="#" id="navDropDownLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="d-none d-lg-inline">@User.Identity?.Name</span>
+            </a>
+
+            <ul class="dropdown-menu dropdown-menu-end mfdb-app-dropdown" aria-labelledby="navDropDownLink">
+                <li class="px-3 py-2">
+                    <div class="d-flex align-items-center justify-content-between gap-3">
+                        <div class="small text-body-secondary">Theme</div>
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" type="checkbox" role="switch" id="themeToggle">
+                            <label class="form-check-label small" for="themeToggle" id="themeToggleLabel">Dark</label>
+                        </div>
+                    </div>
+                </li>
+
+                <li><hr class="dropdown-divider"></li>
+
+                <li>
+                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
+                        Account
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-area="SystemManagement" asp-controller="SystemManagement" asp-action="Index">
+                        System
+                    </a>
+                </li>
+
+                <li><hr class="dropdown-divider"></li>
+
+                <li>
+                    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" class="px-2">
+                        <button type="submit" class="dropdown-item text-danger">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link mfdb-app-navlink" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="btn btn-sm btn-primary" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </li>
+
+        <li class="nav-item d-none d-lg-block">
+            <div class="form-check form-switch mb-0 ms-2">
+                <input class="form-check-input" type="checkbox" role="switch" id="themeToggle">
+                <label class="form-check-label" for="themeToggle" id="themeToggleLabel">Dark</label>
+            </div>
+        </li>
+    }
+</ul>
+
+<script>
+    (function () {
+      const storageKey = 'myficdb.theme';
+      const toggle = document.getElementById('themeToggle');
+      const label = document.getElementById('themeToggleLabel');
+      if (!toggle) return;
+
+      const preferredTheme = () => {
+        const stored = localStorage.getItem(storageKey);
+        if (stored === 'light' || stored === 'dark') return stored;
+        return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      };
+
+      const applyTheme = (theme) => {
+        document.documentElement.setAttribute('data-bs-theme', theme);
+        localStorage.setItem(storageKey, theme);
+
+        const isDark = theme === 'dark';
+        toggle.checked = isDark;
+        if (label) label.textContent = isDark ? 'Dark' : 'Light';
+
+        window.dispatchEvent(new CustomEvent('myficdb:theme-changed', { detail: { theme } }));
+      };
+
+      applyTheme(preferredTheme());
+      toggle.addEventListener('change', () => applyTheme(toggle.checked ? 'dark' : 'light'));
+    })();
+</script>

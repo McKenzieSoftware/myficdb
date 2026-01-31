@@ -1,0 +1,28 @@
+services:
+  myficdb.web:
+    build:
+      context: .
+      dockerfile: MyFicDB.Web/Dockerfile
+    # image: myficdb:0.5.2
+    # user: "${APP_UID:-1000}:${APP_GID:-1000}"
+    ports:
+      - "8080:8080"
+    environment:
+      MYFICDB_DB_PATH: /data/database
+      MYFICDB_SQLITE_COMMAND_TIMEOUT: 30
+
+      MYFICDB_LOGS_PATH: /data/logs
+
+      # If you forget your account password, you can reset it with the below.  
+      # Set the value to TRUE and then enter the password you want.
+      MYFICDB_RESET_PASSWORD: false
+      MYFICDB_RESET_PASSWORD_VALUE: ""
+
+      ASPNETCORE_URLS: http://+:8080
+    volumes:
+      - d:/_JunkData/myficdb_test_mount:/data
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 500M

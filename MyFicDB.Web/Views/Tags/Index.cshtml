@@ -1,0 +1,69 @@
+﻿@model IReadOnlyList<MyFicDB.Core.Models.Tag>
+
+@{
+    ViewData["Title"] = "Tags";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+        <h1 class="mb-1">Tags</h1>
+        <div class="text-body-secondary">Browse all Tags.</div>
+    </div>
+</div>
+
+@if (Model is null || Model.Count == 0)
+{
+    <div class="alert alert-secondary">
+        No tags have been created yet. To create a new tag, <a class="ms-1" asp-controller="Stories" asp-action="Create">create a new story</a> or edit an existing one
+    </div>
+}
+else
+{
+    var assigned = Model.Where(t => t.StoryTags.Any()).OrderBy(t => t.Name);
+    if (assigned.Any())
+    {
+        <div class="card shadow-sm">
+            <div class="card-header">
+                Tags assigned to at least one Story
+            </div>
+            <div class="card-body">
+                <div class="mfdb-tag-cloud">
+                    @foreach (var tag in assigned)
+                    {
+                        <a class="mfdb-tag-pill"
+                           asp-controller="Tags"
+                           asp-action="View"
+                           asp-route-slug="@tag.Slug"
+                           title="@tag.Name">
+                            @tag.Name
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    var unassigned = Model.Where(t => !t.StoryTags.Any()).OrderBy(t => t.Name);
+    if(unassigned.Any())
+    {
+        <div class="card shadow-sm mt-4">
+            <div class="card-header">
+                Tags with no Story
+            </div>
+            <div class="card-body">
+                <div class="mfdb-tag-cloud">
+                    @foreach (var tag in unassigned)
+                    {
+                        <a class="mfdb-tag-pill"
+                           asp-controller="Tags"
+                           asp-action="View"
+                           asp-route-slug="@tag.Slug"
+                           title="@tag.Name">
+                            @tag.Name
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}

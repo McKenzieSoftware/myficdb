@@ -1,0 +1,105 @@
+﻿/*
+  TinyMCE Bootstrap 5 Dark Theme Overlay
+*/
+
+html[data-bs-theme="dark"] {
+	--tinymce-bs-body-bg: var(--bs-body-bg, #212529);
+	--tinymce-bs-body-color: var(--bs-body-color, #f8f9fa);
+	--tinymce-bs-secondary-color: var(--bs-secondary-color, #adb5bd);
+	--tinymce-bs-border-color: var(--bs-border-color, #343a40);
+	--tinymce-bs-tertiary-bg: var(--bs-tertiary-bg, #2b3035);
+	--tinymce-bs-secondary-bg: var(--bs-secondary-bg, #343a40);
+	--tinymce-bs-focus-ring: var(--bs-focus-ring-color, rgba(13, 110, 253, .25));
+	--tinymce-bs-border-radius: var(--bs-border-radius, .375rem);
+}
+
+/* Editor chrome background */
+html[data-bs-theme="dark"] .tox.tox-tinymce {
+	background-color: var(--tinymce-bs-body-bg);
+	border-color: var(--tinymce-bs-border-color);
+}
+
+/* Header */
+html[data-bs-theme="dark"] .tox .tox-editor-header
+{
+	background-color: inherit !important;
+}
+
+/* Toolbar */
+html[data-bs-theme="dark"] .tox .tox-toolbar,
+html[data-bs-theme="dark"] .tox .tox-toolbar__primary,
+html[data-bs-theme="dark"] .tox .tox-toolbar__overflow {
+	background-color: var(--tinymce-bs-body-bg);
+	border-bottom: 1px solid var(--tinymce-bs-border-color);
+	box-shadow: none;
+}
+
+html[data-bs-theme="dark"] .tox .tox-toolbar__group {
+	gap: .25rem;
+}
+
+/* Toolbar buttons */
+html[data-bs-theme="dark"] .tox .tox-tbtn {
+	color: var(--tinymce-bs-body-color);
+	background-color: var(--tinymce-bs-body-bg);
+	border-radius: var(--tinymce-bs-border-radius);
+}
+
+html[data-bs-theme="dark"] .tox .tox-tbtn:hover {
+	background-color: var(--tinymce-bs-secondary-bg);
+}
+
+html[data-bs-theme="dark"] .tox .tox-tbtn--enabled,
+html[data-bs-theme="dark"] .tox .tox-tbtn--active {
+	background-color: var(--tinymce-bs-tertiary-bg);
+	color: var(--tinymce-bs-body-color);
+}
+
+html[data-bs-theme="dark"] .tox .tox-tbtn--disabled {
+	color: var(--tinymce-bs-secondary-color);
+}
+
+html[data-bs-theme="dark"] .tox .tox-tbtn:focus-visible {
+	outline: none;
+	box-shadow: 0 0 0 .25rem var(--tinymce-bs-focus-ring);
+}
+
+/* Icons */
+html[data-bs-theme="dark"] .tox .tox-icon svg,
+html[data-bs-theme="dark"] .tox .tox-tbtn__select-chevron svg {
+	fill: currentColor;
+}
+
+/* Status bar */
+html[data-bs-theme="dark"] .tox .tox-statusbar {
+	background-color: var(--tinymce-bs-body-bg);
+	border-top: 1px solid var(--tinymce-bs-border-color);
+	color: var(--tinymce-bs-secondary-color);
+}
+
+/* Menus & dropdowns */
+html[data-bs-theme="dark"] .tox .tox-menu,
+html[data-bs-theme="dark"] .tox .tox-dialog {
+	background-color: var(--tinymce-bs-body-bg);
+	color: var(--tinymce-bs-body-color);
+	border-color: var(--tinymce-bs-border-color);
+}
+
+/* Menu items */
+html[data-bs-theme="dark"] .tox .tox-collection__item {
+	color: var(--tinymce-bs-body-color);
+}
+
+html[data-bs-theme="dark"] .tox .tox-collection__item--active,
+html[data-bs-theme="dark"] .tox .tox-collection__item:hover {
+	background-color: var(--tinymce-bs-secondary-bg);
+}
+
+/* Inputs */
+html[data-bs-theme="dark"] .tox input,
+html[data-bs-theme="dark"] .tox textarea,
+html[data-bs-theme="dark"] .tox select {
+	background-color: var(--tinymce-bs-body-bg);
+	color: var(--tinymce-bs-body-color);
+	border-color: var(--tinymce-bs-border-color);
+}

@@ -1,0 +1,117 @@
+﻿@using MyFicDB.Web.ViewModels.Chapter
+@model ChapterViewViewModel
+
+@{
+    ViewData["Title"] = $"Chapter: {Model.ChapterNumber}" + (string.IsNullOrWhiteSpace(Model.Title) ? "" : $": {Model.Title}");
+}
+
+<div class="d-flex flex-column flex-lg-row align-items-start justify-content-between gap-3 mb-3">
+    <div>
+        <h1 class="mb-1">
+            Chapter @Model.ChapterNumber
+            @if (!string.IsNullOrWhiteSpace(Model.Title))
+            {
+                <span class="text-body-secondary">— @Model.Title</span>
+            }
+        </h1>
+
+        <div class="text-body-secondary">
+            @{
+                var t = Model.TimeToRead;
+                var timeToRead = t.TotalMinutes < 1
+                ? "< 1 min read"
+                : t.TotalHours >= 1
+                ? $"{(int)t.TotalHours}h {t.Minutes}m read"
+                : $"{(int)t.TotalMinutes} min read";
+            }
+
+            @Model.WordCount.ToString("n0") words, @timeToRead
+        </div>
+    </div>
+
+    <div class="d-flex gap-2 align-self-start align-self-md-end">
+        <a class="btn btn-outline-secondary"
+           asp-controller="Stories"
+           asp-action="View"
+           asp-route-id="@Model.StoryId">
+            Back
+        </a>
+        <a class="btn btn-outline-warning"
+           asp-controller="Chapters"
+           asp-action="Edit"
+           asp-route-storyId="@Model.StoryId"
+           asp-route-chapterNumber="@Model.ChapterNumber">
+            Edit
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div id="chapter-body">
+            @if (string.IsNullOrWhiteSpace(Model.Body))
+            {
+                <div class="text-body-secondary">No content.</div>
+            }
+            else
+            {
+                @Html.Raw(Model.Body)
+            }
+        </div>
+    </div>
+</div>
+
+@* This is required for inline comments to work *@
+<form id="inline-note-af" asp-controller="Chapters" asp-action="View" asp-route-storyId="@Model.StoryId" asp-route-chapterNumber="@Model.ChapterNumber" method="post">
+    @Html.AntiForgeryToken()
+</form>
+
+@* only want to show this if there's more than one chaoter *@
+@if (Model.NextChapterNumber is not null || Model.PreviousChapterNumber is not null)
+{
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <div>
+            @if (Model.PreviousChapterNumber is not null)
+            {
+                <a class="btn btn-outline-primary"
+                   asp-controller="Chapters"
+                   asp-action="View"
+                   asp-route-storyId="@Model.StoryId"
+                   asp-route-chapterNumber="@Model.PreviousChapterNumber">
+                    Previous chapter
+                </a>
+            }
+            else
+            {
+                @* do this for spacing *@
+                <button class="btn btn-outline-primary" style="visibility: hidden" disabled>Previous Chapter</button>
+            }
+        </div>
+
+        <div class="text-body-secondary">
+            Chapter @Model.ChapterNumber
+        </div>
+
+        <div>
+            @if (Model.NextChapterNumber is not null)
+            {
+                <a class="btn btn-outline-primary"
+                   asp-controller="Chapters"
+                   asp-action="View"
+                   asp-route-storyId="@Model.StoryId"
+                   asp-route-chapterNumber="@Model.NextChapterNumber">
+                    Next chapter
+                </a>
+            }
+            else
+            {
+                @* do this for spacing *@
+                <button class="btn btn-outline-primary" style="visibility: hidden" disabled>Next Chapter</button>
+            }
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="~/js/chapterInlineNotes.js" asp-append-version="true"></script>
+}

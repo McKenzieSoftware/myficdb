@@ -1,0 +1,48 @@
+﻿@using MyFicDB.Web.Areas.SystemManagement.ViewModels
+@model ResetSystemViewModel
+
+@{
+    ViewData["Title"] = "Reset System";
+}
+
+<div class="d-flex align-items-start justify-content-between mb-3">
+    <div>
+        <h1 class="mb-1">Reset System</h1>
+        <div class="text-body-secondary">
+            Permanently remove your account and all associated data.
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-danger" role="alert">
+    <strong>Danger zone.</strong> This cannot be undone. Ensure you have a database backup before proceeding.
+</div>
+
+<form method="post" class="card shadow-sm">
+    @Html.AntiForgeryToken()
+
+    <div class="card-body">
+        <div asp-validation-summary="ModelOnly"
+             class="alert alert-danger"
+             role="alert"></div>
+
+        <div class="form-floating mb-3">
+            <input asp-for="Password"
+                   class="form-control"
+                   autocomplete="current-password"
+                   placeholder="Password" />
+
+            <label asp-for="Password"></label>
+
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-danger w-100">
+            Reset System
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

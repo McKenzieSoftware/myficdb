@@ -1,0 +1,143 @@
+﻿@using MyFicDB.Web.ViewModels.Story
+@model StoryCreateViewModel
+
+@{
+    ViewData["Title"] = "Create Story";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <h1 class="mb-0">@ViewData["Title"]</h1>
+    <a class="btn btn-outline-secondary" asp-action="Index">Back to Stories</a>
+</div>
+
+<form method="post" class="card shadow-sm">
+    <div class="card-body">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+        <div class="mb-3">
+            <div class="form-floating">
+                <input asp-for="Title" class="form-control" placeholder="Story Title" />
+                <label asp-for="Title"></label>
+            </div>
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3 d-flex flex-column flex-md-row gap-3 gap-md-4">
+            <div class="mb-3 form-check form-switch">
+                <input asp-for="IsOwnWork" class="form-check-input" type="checkbox" />
+                <label asp-for="IsOwnWork" class="form-check-label"></label>
+                <div class="form-text">
+                    Mark this if you wrote this story yourself.
+                </div>
+                <span asp-validation-for="IsOwnWork" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3 form-check form-switch">
+                <input asp-for="IsAIGenerated" class="form-check-input" type="checkbox" />
+                <label asp-for="IsAIGenerated" class="form-check-label"></label>
+                <div class="form-text">
+                    Mark this if the story was generated using AI.
+                </div>
+                <span asp-validation-for="IsAIGenerated" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3 form-check form-switch">
+                <input asp-for="IsNsfw" class="form-check-input" type="checkbox" />
+                <label asp-for="IsNsfw" class="form-check-label"></label>
+                <div class="form-text">
+                    Mark this if the story contains NSFW content.
+                </div>
+                <span asp-validation-for="IsNsfw" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Summary" class="form-label">Synopsis</label>
+            <textarea asp-for="Summary" id="TinyMCE-Editor" class="form-control wysiwyg" rows="6"></textarea>
+            <span asp-validation-for="Summary" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <div class="form-floating">
+                @* Rows doesn't work on floating label text-areas *@
+                <textarea asp-for="Notes" class="form-control" style="min-height: 250px;"></textarea>
+                <label asp-for="Notes"></label>
+            </div>
+            <span asp-validation-for="Notes" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Tags</label>
+            <input id="tagsInput" asp-for="Tags" class="form-control" autocomplete="off"
+                   placeholder="Type tags, separated by commas. E.g. Dark Comedy, Vampires" />
+
+            <div id="tagsSuggest" class="list-group position-absolute" style="z-index: 2000; display:none; max-width: 520px;"></div>
+            <div class="form-text">
+                Type at least 2 characters to see existing tags. New tags will be created automatically.
+            </div>
+            <span asp-validation-for="Tags" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Series</label>
+            <input id="seriesInput" asp-for="Series" class="form-control" autocomplete="off"
+                   placeholder="Type tags, separated by commas. E.g. Doctor Who, NCIS" />
+
+            <div id="seriesSuggest" class="list-group position-absolute" style="z-index: 2000; display:none; max-width: 520px;"></div>
+            <div class="form-text">
+                Type at least 2 characters to see existing series. New series will be created automatically.
+            </div>
+            <span asp-validation-for="Series" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Actors</label>
+            <input id="actorsInput" asp-for="Actors" class="form-control" autocomplete="off"
+                   placeholder="Type tags, separated by commas. E.g. Donald Duck, Bugs Bunny" />
+
+            <div id="actorsSuggest" class="list-group position-absolute" style="z-index: 2000; display:none; max-width: 520px;"></div>
+            <div class="form-text">
+                Type at least 2 characters to see existing actors. New actors will be created automatically.
+            </div>
+            <span asp-validation-for="Actors" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="card-footer d-flex gap-2 justify-content-end">
+        <a class="btn btn-outline-secondary" asp-action="Index">Cancel</a>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script src="~/lib/tinymce/tinymce.min.js" asp-append-version="true" referrerpolicy="origin"></script>
+    <script src="~/js/tinymce-theme-switch.js" asp-append-version="true" referrerpolicy="origin"></script>
+    <script src="~/js/suggestions.js" asp-append-version="true" referrerpolicy="origin"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          initSuggestBox({
+            inputId: "tagsInput",
+            suggestId: "tagsSuggest",
+            endpoint: "/api/v1/suggest/tags",
+            mode: "csv"
+          });
+
+          initSuggestBox({
+            inputId: "seriesInput",
+            suggestId: "seriesSuggest",
+            endpoint: "/api/v1/suggest/series",
+            mode: "csv"
+          });
+
+          initSuggestBox({
+            inputId: "actorsInput",
+            suggestId: "actorsSuggest",
+            endpoint: "/api/v1/suggest/actors",
+            mode: "csv"
+          });
+        });
+    </script>
+}

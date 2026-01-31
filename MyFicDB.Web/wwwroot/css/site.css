@@ -1,0 +1,286 @@
+:root {
+    --mckl-highlight: #FDDA0D;
+    --mckl-highlight-dark: #978207;
+}
+
+
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+/* Tags */
+.mfdb-tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.mfdb-tag-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: .35rem .65rem;
+    border-radius: 999px;
+    text-decoration: none;
+    border: 1px solid var(--bs-border-color);
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    transition: transform 120ms ease, background-color 120ms ease, border-color 120ms ease;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+    .mfdb-tag-pill:hover {
+        background: var(--bs-tertiary-bg);
+        border-color: var(--bs-secondary-color);
+        transform: translateY(-1px);
+        text-decoration: none;
+    }
+
+    .mfdb-tag-pill:focus-visible {
+        outline: 0;
+        box-shadow: 0 0 0 .25rem rgba(var(--bs-primary-rgb), .25);
+    }
+
+/* Wee Helpers */
+.mfdb-with-divider {
+    border-top: 1px solid var(--bs-border-color);
+    padding-top: .5rem;
+    margin-top: .5rem;
+}
+
+/* ==========================
+   App Navbar
+   ========================== */
+
+.mfdb-app-header {
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1030;
+}
+
+.mfdb-app-navbar {
+    background: rgba(var(--bs-body-bg-rgb), 0.82);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.navbar .container {
+    padding-top: .35rem;
+    padding-bottom: .35rem;
+}
+
+.mfdb-brand-mark {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    letter-spacing: .5px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.mfdb-brand-title {
+    font-weight: 650;
+}
+
+.mfdb-brand-subtitle {
+    font-size: .78rem;
+}
+
+.mfdb-app-navlink {
+    border-radius: 999px;
+    padding: .45rem .8rem;
+    margin: .15rem .15rem;
+    font-weight: 500;
+    color: var(--bs-body-color);
+    transition: background-color .15s ease, color .15s ease;
+}
+
+[data-bs-theme="light"] .mfdb-app-navlink:hover,
+[data-bs-theme="light"] .mfdb-app-navlink:focus,
+[data-bs-theme="light"] .mfdb-app-userlink:hover,
+[data-bs-theme="light"] .mfdb-app-dropdown .dropdown-item:hover,
+[data-bs-theme="light"] a.footer-link:hover {
+    color: var(--mckl-highlight-dark); /* darker text */
+    background: none;
+}
+
+[data-bs-theme="dark"] .mfdb-app-navlink:hover,
+[data-bs-theme="dark"] .mfdb-app-navlink:focus,
+[data-bs-theme="dark"] .mfdb-app-userlink:hover,
+[data-bs-theme="dark"] .mfdb-app-dropdown .dropdown-item:hover,
+[data-bs-theme="dark"] a.footer-link:hover {
+    color: var(--mckl-highlight);
+    background: none;
+}
+
+a.footer-link {
+    color: var(--bs-body-color);
+    text-decoration: none;
+}
+
+.navbar-nav .nav-link.active,
+.navbar-nav .show > .nav-link {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.mfdb-app-userlink {
+    border-radius: 999px;
+    padding: .45rem .65rem;
+}
+
+.mfdb-app-dropdown {
+    min-width: 240px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(var(--bs-body-bg-rgb), 0.98);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+}
+
+    .mfdb-app-dropdown .dropdown-item {
+        border-radius: 10px;
+        margin: 2px 8px;
+        padding: .55rem .8rem;
+    }
+
+/*
+    Chapter View/Edit Page for Inline Notes
+*/
+.mfdb-inline-note-highlight {
+    background: rgba(255, 193, 7, 0.35);
+    border-bottom: 1px dashed rgba(255, 193, 7, 0.9);
+    cursor: pointer;
+}
+
+.mfdb-inline-note-menu {
+    position: absolute;
+    z-index: 2000;
+    min-width: 180px;
+    display: none;
+}
+
+.mfdb-editor-layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 1rem;
+    align-items: stretch;
+    /*max-height: calc(100vh - 6rem);*/
+}
+
+    .mfdb-editor-layout.no-notes {
+        grid-template-columns: 1fr;
+    }
+
+    /* collapsed notes rail */
+    .mfdb-editor-layout.notes-collapsed {
+        grid-template-columns: 1fr 36px;
+    }
+
+/* editor pane */
+.mfdb-editor-pane {
+    min-width: 0;
+    display: flex;
+}
+
+    /* editor card must stretch */
+    .mfdb-editor-pane .card {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* card-body is the height source for TinyMCE */
+    .mfdb-editor-pane .card-body {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+/* Notes pane wrapper */
+.mfdb-notes-pane {
+    position: relative;
+}
+
+.mfdb-notes-content {
+    top: 1rem;
+    max-height: calc(100vh - 6rem);
+}
+
+/* hide notes content when collapsed */
+.mfdb-editor-layout.notes-collapsed .mfdb-notes-content {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* collapse rail */
+.mfdb-notes-rail {
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: 36px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: var(--bs-warning-bg-subtle);
+    border-left: 1px solid var(--bs-warning-border-subtle);
+    cursor: pointer;
+}
+
+.mfdb-editor-layout.notes-collapsed .mfdb-notes-rail {
+    display: flex;
+}
+
+/* mobile: stack */
+@media (max-width: 992px) {
+    .mfdb-editor-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .mfdb-notes-rail {
+        display: none !important;
+    }
+}
+
+/* Force TinyMCE to obey parent flex height */
+.mfdb-editor-pane .tox-tinymce {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.mfdb-editor-pane .tox-editor-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.mfdb-editor-pane .tox-edit-area {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+    .mfdb-editor-pane .tox-edit-area iframe {
+        height: 100% !important;
+    }

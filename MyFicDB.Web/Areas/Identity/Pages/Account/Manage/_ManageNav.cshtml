@@ -1,0 +1,18 @@
+﻿@inject SignInManager<IdentityUser> SignInManager
+
+<div class="list-group list-group-flush">
+    <a class="list-group-item list-group-item-action d-flex align-items-center gap-2 @ManageNavPages.IndexNavClass(ViewContext)"
+       id="profile" asp-page="./Index">
+        <span>Profile</span>
+    </a>
+
+    <a class="list-group-item list-group-item-action d-flex align-items-center gap-2 @ManageNavPages.ChangePasswordNavClass(ViewContext)"
+       id="change-password" asp-page="./ChangePassword">
+        <span>Password</span>
+    </a>
+
+    <a class="list-group-item list-group-item-action d-flex align-items-center gap-2 @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)"
+       id="two-factor" asp-page="./TwoFactorAuthentication">
+        <span>Two-factor authentication</span>
+    </a>
+</div>

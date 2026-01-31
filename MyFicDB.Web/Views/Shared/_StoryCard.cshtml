@@ -1,0 +1,109 @@
+﻿@using MyFicDB.Core.Extensions
+@using MyFicDB.Web.ViewModels.Story
+@model StoryCardViewModel
+
+<div class="col">
+    <div class="card h-100 shadow-sm position-relative">
+
+        <!-- Whole-card link (sits behind content) -->
+        <a asp-controller="Stories"
+           asp-action="View"
+           asp-route-id="@Model.Id"
+           class="stretched-link"
+           aria-label="Open @Model.Title"></a>
+
+        <div class="card-body d-flex flex-column">
+
+            <!-- Created date (top-right) -->
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div class="me-3">
+                    <h5 class="card-title mb-0">@Model.Title</h5>
+                    <div class="text-body-secondary small">
+                        @if (Model.Series?.Any() == true)
+                        {
+                            var series = Model.Series.ToList(); for (int i = 0; i < series.Count; i++)
+                            {
+                                <a asp-controller="Series" asp-action="View" asp-route-slug="@series[i].Slug" class="position-relative text-decoration-none"
+                                   style="z-index: 2;">@series[i].Name</a>@(i < series.Count - 1 ? ", " : "")
+                                /* Comma has to go on the same line as the Series Name or Razor adds whitespace to both ends */
+                            }
+                        }
+                    </div>
+                </div>
+
+                <div class="text-body-secondary small text-nowrap">
+                    @Model.CreatedDate.ToString("dd MMM yyyy")
+                </div>
+            </div>
+
+            <!-- Tags -->
+            @if (Model.Tags?.Any() == true)
+            {
+                <div class="mb-2 d-flex flex-wrap gap-1">
+                    @foreach (var st in Model.Tags)
+                    {
+                        <a asp-controller="Tags"
+                           asp-action="View"
+                           asp-route-slug="@st.Slug"
+                           class="mfdb-tag-pill position-relative"
+                           style="z-index: 2;">
+                            @st.Name
+                        </a>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="mb-2 text-body-secondary small">No tags</div>
+            }
+
+            <!-- Summary -->
+            <p class="mb-0 text-body">
+                @(Model.Summary?.TruncateWords(50) ?? "No summary available.")
+            </p>
+
+            <div class="mt-auto"></div>
+        </div>
+
+        <!-- Footer -->
+        <div class="card-footer bg-transparent">
+            <div class="d-flex justify-content-between align-items-center small text-body-secondary">
+
+                <!-- Left: words + chapters -->
+                <div class="d-flex gap-3">
+                    <span>
+                        <strong class="text-body">@Model.TotalWordCount.ToString("n0")</strong> words
+                    </span>
+                    <span>
+                        <strong class="text-body">@Model.ChapterCount</strong> chapters
+                    </span>
+                    @if (Model.IsNsfw)
+                    {
+                        <span>
+                            <strong class="text-body">@Model.NutCount</strong> Nuts
+                        </span>
+                    }
+                    <span>
+                        <strong class="text-body">@Model.ReadCount</strong> Reads
+                    </span>
+                </div>
+
+                <!-- Right: flags -->
+                <div class="d-flex gap-1">
+                    @if (Model.IsAIGenerated)
+                    {
+                        <span class="badge bg-warning text-dark">AI</span>
+                    }
+                    @if (Model.IsOwnWork)
+                    {
+                        <span class="badge bg-success">Own Work</span>
+                    }
+                    @if (Model.IsNsfw)
+                    {
+                        <span class="badge bg-danger">NSFW</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
